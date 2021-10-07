@@ -1,0 +1,18 @@
+{
+  "name": "api-astratic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/dannygonzalezchisica/api-astratic",
+  "author": "dannygonzalezchisica <dannychisica@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
