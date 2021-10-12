@@ -1,18 +1,10 @@
 import Express from "express"
 import Cors from 'cors'
 import dotenv from "dotenv"
+import { conectarBD, getDB } from "./db/db.js"
 import { MongoClient, ObjectId } from "mongodb"
 
 dotenv.config({path: './.env'})
-
-const stringConexion = process.env.DATABASE_URL
-
-const client = new MongoClient(stringConexion, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-
-let conexion
 
 const app = Express()
 
@@ -21,7 +13,8 @@ app.use(Cors())
 
 app.get('/usuarios', (req, res) => {
     console.log('Alguien hizo GET en la ruta /usuarios')
-    conexion.collection('usuario').find({}).toArray((err, result)=> {
+    const baseDeDatos = getDB()
+    baseDeDatos.collection('usuario').find({}).toArray((err, result)=> {
         if(err) {
             res.status(500).send('Error consultando los vehículos')
         } else {
@@ -42,7 +35,8 @@ app.post('/usuarios/nuevo', (req, res) => {
         Object.keys(datosUsuario).includes('rol') &&
         Object.keys(datosUsuario).includes('estado')) {
             // Implementar código para crear usuario en la BD
-            conexion.collection('usuario').insertOne(datosUsuario, (err, result)=> {
+            const baseDeDatos = getDB()
+            baseDeDatos.collection('usuario').insertOne(datosUsuario, (err, result)=> {
                 if(err) {
                     console.error(err)
                    res.sendStatus(500) 
@@ -67,8 +61,8 @@ app.patch('/usuarios/editar', (req, res) => {
     const operacion = {
         $set: edicion
     }
-
-    conexion.collection('usuario').findOneAndUpdate(filtroUsuario, operacion, {upsert: true, returnOriginal: true}, (err, result)=> {
+    const baseDeDatos = getDB()
+    baseDeDatos.collection('usuario').findOneAndUpdate(filtroUsuario, operacion, {upsert: true, returnOriginal: true}, (err, result)=> {
         if(err) {
             console.error('Error actualizando el usuario: ', err)
             res.sendStatus(500)
@@ -81,7 +75,8 @@ app.patch('/usuarios/editar', (req, res) => {
 
 app.delete('/usuarios/eliminar', (req, res) => {
     const filtroUsuario = {_id: new ObjectId(req.body.id)}
-    conexion.collection('usuario').deleteOne(filtroUsuario, (err, result)=> {
+    const baseDeDatos = getDB()
+    baseDeDatos.collection('usuario').deleteOne(filtroUsuario, (err, result)=> {
         if(err) {
             console.error(err)
             res.sendStatus(500)
@@ -92,17 +87,9 @@ app.delete('/usuarios/eliminar', (req, res) => {
 })
 
 const main = () => {
-    client.connect((err, db)=> {
-        if(err) {
-            console.error("Error conectando a la base de datos")
-            return false;
-        }
-        conexion = db.db('astratic')
-        console.log('¡Conexión exitosa!')
-        return app.listen(process.env.PORT, () => {
-            console.log(`Escuchando puerto ${process.env.PORT}`)
-        })
+    return app.listen(process.env.PORT, () => {
+        console.log(`Escuchando puerto ${process.env.PORT}`)
     })
 }
 
-main()
+conectarBD(main)
