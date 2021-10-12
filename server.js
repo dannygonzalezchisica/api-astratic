@@ -1,18 +1,10 @@
 import Express from "express";
 import Cors from "cors";
 import dotenv from "dotenv"
+import { conectarBD, getBD } from "./db/db.js";
 import { MongoClient, ObjectId } from "mongodb";
 
 dotenv.config({path: './.env'})
-
-const stringConexion = process.env.DATABASE_URL
-
-const client = new MongoClient(stringConexion, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-
-let baseDeDatos
 
 const app = Express()
 
@@ -21,6 +13,7 @@ app.use(Cors())
 
 app.get('/usuarios', (req, res) => {
     console.log('Alguien hizo GET en la ruta /usuarios')
+    const baseDeDatos = getBD()
     baseDeDatos.collection('usuarios').find({}).toArray((err, result) => {
         if(err) {
             res.status(500).send('Error consultando los usuarios')
@@ -44,6 +37,7 @@ app.post('/usuarios/nuevo', (req, res) => {
             Object.keys(datosUsuario).includes('estado')
         ) {
             // Implementar código para crear usuario en la BD
+            const baseDeDatos = getBD()
             baseDeDatos.collection('usuarios').insertOne(datosUsuario, (err, result) => {
                 if(err) {
                     console.error(err)
@@ -69,6 +63,7 @@ app.patch('/usuarios/editar', (req, res) => {
     const operacion = {
         $set: edicion,
     }
+    const baseDeDatos = getBD()
     baseDeDatos.collection('usuarios').findOneAndUpdate(filtroUsuario, operacion, {upsert: true, returnOriginal: true}, (err, result) => {
         if(err) {
             console.error('Error actualizando el usuario: ', err)
@@ -82,6 +77,7 @@ app.patch('/usuarios/editar', (req, res) => {
 
 app.delete('/usuarios/eliminar', (req, res) => {
     const filtroUsuario = {_id: new ObjectId(req.body.id)}
+    const baseDeDatos = getBD()
     baseDeDatos.collection('usuarios').deleteOne(filtroUsuario, (err, result) => {
         if(err) {
             console.error(err)
@@ -93,17 +89,9 @@ app.delete('/usuarios/eliminar', (req, res) => {
 })
 
 const main = () => {
-
-    client.connect((err, db) => {
-        if(err) {
-            console.error('Error conectando a la BD')
-        }
-        baseDeDatos = db.db('empresaGenerica')
-        console.log('¡Conexión exitosa!')
-        return app.listen(process.env.PORT, () => {
-            console.log(`Escuchando puerto ${process.env.PORT}`);
-        })
+    return app.listen(process.env.PORT, () => {
+        console.log(`Escuchando puerto ${process.env.PORT}`);
     })
 }
 
-main()
+conectarBD(main)
