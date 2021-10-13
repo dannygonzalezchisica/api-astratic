@@ -24,9 +24,8 @@ const crearUsuario = async (datosUsuario, callback) => {
         }   
 }
 
-const editarUsuario = async (edicion, callback) => {
-    const filtroUsuario = {_id: new ObjectId(edicion.id)}
-    delete edicion.id;
+const editarUsuario = async (id, edicion, callback) => {
+    const filtroUsuario = {_id: new ObjectId(id)}
     const operacion = {
         $set: edicion,
     }
