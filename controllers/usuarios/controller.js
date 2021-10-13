@@ -34,4 +34,10 @@ const editarUsuario = async (edicion, callback) => {
     await baseDeDatos.collection('usuarios').findOneAndUpdate(filtroUsuario, operacion, {upsert: true, returnOriginal: true}, callback)
 }
 
-export { queryAllUsers, crearUsuario, editarUsuario }
+const eliminarUsuario = async (id, callback) => {
+    const filtroUsuario = {_id: new ObjectId(id)}
+    const baseDeDatos = getBD()
+    await baseDeDatos.collection('usuarios').deleteOne(filtroUsuario, callback)
+}
+
+export { queryAllUsers, crearUsuario, editarUsuario, eliminarUsuario }

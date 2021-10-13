@@ -1,6 +1,5 @@
 import Express from "express";
-import { crearUsuario, editarUsuario, queryAllUsers } from "../../controllers/usuarios/controller.js";
-import { getBD } from "../../db/db.js";
+import { crearUsuario, editarUsuario, eliminarUsuario, queryAllUsers } from "../../controllers/usuarios/controller.js";
 
 const rutasUsuario = Express.Router()
 
@@ -26,16 +25,7 @@ rutasUsuario.route('/usuarios/editar').patch((req, res) => {
 })
 
 rutasUsuario.route('/usuarios/eliminar').delete((req, res) => {
-    const filtroUsuario = {_id: new ObjectId(req.body.id)}
-    const baseDeDatos = getBD()
-    baseDeDatos.collection('usuarios').deleteOne(filtroUsuario, (err, result) => {
-        if(err) {
-            console.error(err)
-            res.sendStatus(500)
-        } else {
-            res.sendStatus(200)
-        }
-    })
+    eliminarUsuario(req.body.id, genericCallback(res))
 })
 
 export default rutasUsuario
