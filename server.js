@@ -1,7 +1,7 @@
 import Express from "express";
 import Cors from "cors";
 import dotenv from "dotenv"
-import { conectarBD, getBD } from "./db/db.js";
+import { conectarBD } from "./db/db.js";
 import rutasUsuario from "./views/usuarios/rutas.js";
 
 dotenv.config({path: './.env'})
