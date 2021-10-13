@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { getBD } from "../../db/db.js";
 
 const queryAllUsers = async (callback) => {
@@ -17,10 +18,20 @@ const crearUsuario = async (datosUsuario, callback) => {
         ) {
             // Implementar código para crear usuario en la BD
             const baseDeDatos = getBD()
-            baseDeDatos.collection('usuarios').insertOne(datosUsuario, callback)
+            await baseDeDatos.collection('usuarios').insertOne(datosUsuario, callback)
         } else {
             return 'Error'
         }   
 }
 
-export { queryAllUsers, crearUsuario }
+const editarUsuario = async (edicion, callback) => {
+    const filtroUsuario = {_id: new ObjectId(edicion.id)}
+    delete edicion.id;
+    const operacion = {
+        $set: edicion,
+    }
+    const baseDeDatos = getBD()
+    await baseDeDatos.collection('usuarios').findOneAndUpdate(filtroUsuario, operacion, {upsert: true, returnOriginal: true}, callback)
+}
+
+export { queryAllUsers, crearUsuario, editarUsuario }
