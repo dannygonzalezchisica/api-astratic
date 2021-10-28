@@ -21,6 +21,7 @@ const autorizacionEstadoUsuario = async (req, res, next) => {
             }
         }
     })
+    console.log('¡Hola mundo! Soy un middleware')
     // 5. Si el usuario está PENDIENTE o AUTORIZADO, ejecutar next()
     next()
 }
