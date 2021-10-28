@@ -1,5 +1,5 @@
 import Express from "express";
-import { crearUsuario, editarUsuario, eliminarUsuario, queryAllUsers } from "../../controllers/usuarios/controller.js";
+import { crearUsuario, editarUsuario, eliminarUsuario, queryAllUsers, consultarUsuario, consultarOCrearUsuario } from "../../controllers/usuarios/controller.js";
 
 const rutasUsuario = Express.Router()
 
@@ -18,6 +18,12 @@ rutasUsuario.route('/usuarios').get((req, res) => {
 
 rutasUsuario.route('/usuarios').post((req, res) => {
    crearUsuario(req.body, genericCallback(res))
+})
+
+rutasUsuario.route('/usuarios/self').get((req, res) => {
+    console.log('Alguien hizo GET en la ruta /usuarios/self')
+    consultarOCrearUsuario(req, genericCallback(res))
+    // consultarUsuario(req.params.id, req.body, genericCallback(res))
 })
 
 rutasUsuario.route('/usuarios/:id').patch((req, res) => {
