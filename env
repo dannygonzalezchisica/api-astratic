@@ -1,0 +1,2 @@
+PORT = 5050
+DATABASE_URL = "mongodb+srv://dgonzalez:Chilemoleposole1998@proyectoastratic.1gog8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
